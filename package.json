@@ -1,0 +1,18 @@
+{
+  "name": "rubik-mongoose",
+  "version": "1.0.0",
+  "description": "Mongose's kubik for rubik",
+  "main": "index.js",
+  "repository": "git@github.com:ya-kostik/rubik-mongoose.git",
+  "author": "Constantin Tsukanov <c@indotech.ru>",
+  "license": "Apache-2.0",
+  "private": false,
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "jest": "^22.4.3"
+  }
+}
