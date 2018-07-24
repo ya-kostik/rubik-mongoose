@@ -9,8 +9,14 @@
   "private": false,
   "scripts": {
     "test": "jest --verbose",
-    "watch": "jest --watch --verbose"
+    "watch": "jest --watch --verbose",
+    "toPublish": "tarball=\"$(npm pack .)\"; wc -c \"${tarball}\"; tar tvf \"${tarball}\"; rm \"${tarball}\";"
   },
+  "files": [
+    "Mongoose.js",
+    "/default",
+    "delay.js"
+  ],
   "perDependencies": {
     "rubik-main": "^1.5.1",
     "mongoose": "^5.2.5"
@@ -23,6 +29,7 @@
     "rubik-main": "^1.5.1"
   },
   "dependencies": {
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.10",
+    "mongoose": "^5.2.5"
   }
 }
