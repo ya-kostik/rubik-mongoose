@@ -12,6 +12,12 @@
     "watch": "jest --watch --verbose",
     "toPublish": "tarball=\"$(npm pack .)\"; wc -c \"${tarball}\"; tar tvf \"${tarball}\"; rm \"${tarball}\";"
   },
+  "keywords": [
+    "mongoose",
+    "kubik",
+    "rubik",
+    "mongodb"
+  ],
   "files": [
     "Mongoose.js",
     "/default",
