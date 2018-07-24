@@ -38,16 +38,25 @@ class Mongoose extends Rubik.Kubik {
    * @return {String}              mongodb connection string
    */
   getConnectionUri(connConfig) {
-    if (!connConfig) connConfig = this.options.connection;
+    if (!connConfig) connConfig = this.config.get('storage').connection;
+    // Alias
+    connConfig.username = connConfig.user && !connConfig.username
+      ? connConfig.user
+      : connConfig.username;
+
     let uri = 'mongodb://';
     if (connConfig.username) {
       uri = uri + connConfig.username;
       uri += connConfig.password ? `:${connConfig.password}` : '';
-      uri += '';
+      uri += '@';
     }
 
     if (Array.isArray(connConfig.members)) {
-      const members = connConfig.members.join(',');
+      const members = connConfig.members.map((member) => {
+        if (member.split(':').length === 2) return member;
+        if (connConfig.port) return `${member}:${connConfig.port}`;
+        return member;
+      }).join(',');
       uri += members;
     } else {
       uri += connConfig.host;
@@ -69,7 +78,6 @@ class Mongoose extends Rubik.Kubik {
    */
   async up(dependencies) {
     Object.assign(this, dependencies);
-    this.options = this.config.get(this.name);
 
     this.databaseName = (this.config.connection
       && this.config.connection.database)
@@ -83,6 +91,8 @@ class Mongoose extends Rubik.Kubik {
 
     await this.readModels();
     await this.connect();
+    // Add app alias
+    if (!this.app[this.name]) this.app[this.name] = this;
     return this.db;
   }
 
@@ -93,7 +103,15 @@ class Mongoose extends Rubik.Kubik {
   applyExtension(extension) {
     if (isString(extension)) return this.volumes.push(extension);
     if (Array.isArray(extension)) {
-      return this.volumes = this.volumes.concat(extension);
+      for (const subExtension of extension) {
+        if (!subExtension) continue;
+        if (isString(subExtension)) {
+          this.volumes.push(subExtension);
+          continue;
+        }
+        this.applyModel(subExtension);
+      }
+      return;
     }
     return this.applyModel(extension);
   }
@@ -104,14 +122,21 @@ class Mongoose extends Rubik.Kubik {
    */
   readModels() {
     const path = require('path');
+    const apply = (value) => {
+      if (isFunction(value)) return value(this, mongoose);
+      if (value && value.name && value.schema) {
+        return this.applyModel(value);
+      }
+    }
+
     for (const volume of this.volumes) {
-      return Rubik.helpers.readdir(volume, (file) => {
+      return Rubik.helpers.readdir(volume, (file, name) => {
         const value = require(path.join(volume, file));
-        if (isFunction(value)) {
-          value(this, mongoose);
-        } else if (value && value.name && value.schema) {
-          this.applyModel(value);
+        if (Array.isArray(value)) return value.forEach(apply);
+        if (value && value.constructor === mongoose.Schema) {
+          return this.applyModel({ name, schema: value });
         }
+        return apply(value);
       });
     }
   }

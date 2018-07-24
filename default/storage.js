@@ -1,7 +1,7 @@
 module.exports = {
   connection: {
     host: 'localhost',
-    port: null,
+    port: '27017',
     database: 'test',
     username: null,
     password: null,
@@ -12,7 +12,8 @@ module.exports = {
     keepAlive: 500,
     autoReconnect: true,
     reconnectTries: 120,
-    reconnectInterval: 1000
+    reconnectInterval: 1000,
+    useNewUrlParser: true
   },
   chunkSize: 8 * 1024 * 1024
 }
