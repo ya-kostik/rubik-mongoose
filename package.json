@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "Mongose's kubik for rubik",
   "main": "index.js",
-  "repository": "git@github.com:ya-kostik/rubik-mongoose.git",
+  "repository": "https://github.com/ya-kostik/rubik-mongoose",
   "author": "Constantin Tsukanov <c@indotech.ru>",
   "license": "Apache-2.0",
   "private": false,
