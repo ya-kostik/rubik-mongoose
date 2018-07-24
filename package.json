@@ -1,6 +1,6 @@
 {
   "name": "rubik-mongoose",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Mongose's kubik for rubik",
   "main": "index.js",
   "repository": "git@github.com:ya-kostik/rubik-mongoose.git",
