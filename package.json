@@ -1,8 +1,8 @@
 {
   "name": "rubik-mongoose",
   "version": "1.0.1",
-  "description": "Mongose's kubik for rubik",
-  "main": "index.js",
+  "description": "Mongoose's kubik for rubik",
+  "main": "Mongoose.js",
   "repository": "https://github.com/ya-kostik/rubik-mongoose",
   "author": "Constantin Tsukanov <c@indotech.ru>",
   "license": "Apache-2.0",
