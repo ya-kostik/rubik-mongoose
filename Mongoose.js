@@ -79,9 +79,6 @@ class Mongoose extends Rubik.Kubik {
   async up(dependencies) {
     Object.assign(this, dependencies);
 
-    this.databaseName = (this.config.connection
-      && this.config.connection.database)
-      || 'test';
     if (this.db) return this.db;
     await this.applyHooks('before');
 
@@ -179,6 +176,8 @@ class Mongoose extends Rubik.Kubik {
     }
 
     await connect();
+
+    this.databaseName = config.connection.database;
 
     this.log.info('Storage connected to mongodb 🍔');
     this.log.info('Database: ' + this.databaseName);
