@@ -5,11 +5,13 @@ Mongose's kubik for rubik
 
 ### npm
 ```bash
+npm i mongoose
 npm i rubik-mongoose
 ```
 
 ### yarn
 ```bash
+yarn add mongoose
 yarn add rubik-mongoose
 ```
 
