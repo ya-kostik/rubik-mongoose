@@ -1,6 +1,5 @@
 const Rubik = require('rubik-main');
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
 const querystring = require('querystring');
 const isFunction = require('lodash/isFunction');
 const isString = require('lodash/isString');
@@ -21,15 +20,26 @@ class Mongoose extends Rubik.Kubik {
   constructor(volumes) {
     super();
     this.volumes = [];
-    this.models = mongoose.models;
-    this.mongoose = mongoose;
-    this.connection = null;
+    // First init
+    this.reset();
 
     if (Array.isArray(volumes)) {
       this.volumes = volumes;
     } else if (typeof volumes === 'string') {
       this.volumes.push(volumes);
     }
+  }
+
+  /**
+   * Reset main fields
+   */
+  reset() {
+    // For isolate mongoose and avoid collisions impact
+    this.mongoose = new mongoose.constructor();
+    // Alias (app.storage.models)
+    this.models = this.mongoose.models;
+    this.connection = null;
+    this.db = null;
   }
 
   /**
@@ -80,7 +90,7 @@ class Mongoose extends Rubik.Kubik {
     Object.assign(this, dependencies);
 
     if (this.db) return this.db;
-    await this.applyHooks('before');
+    await this.processHooksAsync('before');
 
     for (const extension of this.extensions) {
       this.applyExtension(extension);
@@ -120,7 +130,7 @@ class Mongoose extends Rubik.Kubik {
   readModels() {
     const path = require('path');
     const apply = (value) => {
-      if (isFunction(value)) return value(this, mongoose);
+      if (isFunction(value)) return value(this, this.mongoose);
       if (value && value.name && value.schema) {
         return this.applyModel(value);
       }
@@ -130,7 +140,7 @@ class Mongoose extends Rubik.Kubik {
       return Rubik.helpers.readdir(volume, (file, name) => {
         const value = require(path.join(volume, file));
         if (Array.isArray(value)) return value.forEach(apply);
-        if (value && value.constructor === mongoose.Schema) {
+        if (value && value.constructor === this.mongoose.Schema) {
           return this.applyModel({ name, schema: value });
         }
         return apply(value);
@@ -148,7 +158,7 @@ class Mongoose extends Rubik.Kubik {
   applyModel(model) {
     if (!(model && model.name && model.schema)) return;
     const collection = model.collection || undefined;
-    mongoose.model(model.name, model.schema, collection);
+    this.mongoose.model(model.name, model.schema, collection);
   }
 
   /**
@@ -161,7 +171,7 @@ class Mongoose extends Rubik.Kubik {
     const config = this.config.get('storage');
 
     const connect = () => {
-      return mongoose.connect(
+      return this.mongoose.connect(
         this.getConnectionUri(config.connection),
         config.options
       ).catch(async (err) => {
@@ -190,8 +200,8 @@ class Mongoose extends Rubik.Kubik {
       );
     }
 
-    this.db = mongoose.connection.db;
-    this.connection = mongoose.connection;
+    this.db = this.mongoose.connection.db;
+    this.connection = this.mongoose.connection;
     return this.connection;
   }
 
@@ -205,9 +215,18 @@ class Mongoose extends Rubik.Kubik {
     return this.db.collection(name);
   }
 
+  /**
+   * down kubik
+   * @return {Promise}
+   */
+  async down() {
+    await this.mongoose.disconnect();
+    this.reset();
+  }
+
 
   async after() {
-    await this.applyHooks('after');
+    await this.processHooksAsync('after');
   }
 }
 

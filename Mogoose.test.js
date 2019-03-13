@@ -1,8 +1,15 @@
+/* eslint-disable */
 /* global test expect jest */
+/* eslint-enable */
+
 const path = require('path');
 const { createKubik, createApp } = require('rubik-main/tests/helpers/creators');
 const { Kubiks } = require('rubik-main');
+
+const runMongoTestServer = require('./tests/helpers/runMongoTestServer');
+
 const Mongoose = require('./Mongoose');
+
 
 const initApp = () => {
   const app = createApp();
@@ -19,8 +26,17 @@ test('Create kubik and add it into rubik app', () => {
 });
 
 test('Add extensions and connect to MongoDB', async () => {
-  // If you want to test first connection error
-  jest.setTimeout(200000);
+  /*
+      If you want to test first connection error:
+        1. Shutdown MongoDB
+        2. Uncomment lines below, and comment `await runMongoTestServer()`
+        3. Start test, wait, and start MongoDB server
+        It is tricky hack, I know, but have no idea to make it another way
+  */
+
+  // jest.setTimeout(200000);
+  // console.info('Test on native MongoDB');
+
   const app = initApp();
   const storage = createKubik(Mongoose, app);
   storage.use(path.join(__dirname, './tests/mocks/auto-read-schemas/'));
@@ -30,10 +46,27 @@ test('Add extensions and connect to MongoDB', async () => {
   ]);
   storage.use(require('./tests/mocks/models'));
   storage.use(require('./tests/mocks/models/one.js'));
+
+  /**
+      Comment lines below, if you want to test first connection error
+  */
+  //  MongoDB in memory section
+  console.info('Test on in memory MongoDB.');
+  console.info('When it starts first time, it downloads mongod binary, and tests may fail. Restart them after download is complete');
+  const { port, mongod } = await runMongoTestServer();
+  app.get('config').get('storage').connection.port = port;
+  app.hook('afterDown', async () => {
+    await mongod.stop();
+  });
+  //   MongoDB in memory section end
+
+
   await app.up();
   expect(app.get('storage').db).toBeDefined();
   expect(storage.mongoose.models.TestA).toBe(app.storage.models.TestA);
   expect(storage.collection('TestsA')).toBeDefined();
+
+  await app.down();
 });
 
 test('Сonnection url', () => {
