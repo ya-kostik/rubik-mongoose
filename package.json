@@ -1,6 +1,6 @@
 {
   "name": "rubik-mongoose",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Mongoose's kubik for rubik",
   "main": "Mongoose.js",
   "repository": "https://github.com/ya-kostik/rubik-mongoose",
@@ -28,15 +28,15 @@
     "mongoose": "^5.4.19"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.3",
-    "eslint": "^4.19.1",
-    "jest": "^22.4.3",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.15.1",
+    "jest": "^24.5.0",
     "mongodb": "^3.1.13",
     "mongodb-memory-server": "^4.1.2",
     "mongoose": "^5.4.19",
     "rubik-main": "^2.1.1"
   },
   "dependencies": {
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.11"
   }
 }
