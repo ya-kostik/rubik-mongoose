@@ -44,11 +44,11 @@ class Mongoose extends Rubik.Kubik {
 
   /**
    * Create connection string to MongoDB
-   * @param  {Object} connConfig — configuration object (config.get('storage').connection)
+   * @param  {Object} connConfig — configuration object (config.get(this.name).connection)
    * @return {String}              mongodb connection string
    */
   getConnectionUri(connConfig) {
-    if (!connConfig) connConfig = this.config.get('storage').connection;
+    if (!connConfig) connConfig = this.config.get(this.name).connection;
     // Alias
     connConfig.username = connConfig.user && !connConfig.username
       ? connConfig.user
@@ -168,7 +168,7 @@ class Mongoose extends Rubik.Kubik {
    */
   async connect() {
     const reg = /failed to connect to server \[.*?\] on first connect/;
-    const config = this.config.get('storage');
+    const config = this.config.get(this.name);
 
     const connect = () => {
       return this.mongoose.connect(

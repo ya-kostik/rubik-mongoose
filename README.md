@@ -15,7 +15,7 @@ yarn add mongoose
 yarn add rubik-mongoose
 ```
 
-## Use
+# Use
 ```javascript
 const { App, Kubiks } = require('rubik-main');
 const Mongoose = require('rubik-mongoose');
@@ -132,3 +132,24 @@ storage.use([
   path.join(__dirname, './additional-models/')
 ]);
 ```
+
+# Use kubik with different name, or kubiks with different databases
+By default Mongoose kubik has `storage` name, and the same config filename.
+
+If you need different name, or use two Mongoose kubiks with different databases, you can change name of kubik.
+```js
+const pathToModels = path.join(__dirname, './storage/models/');
+
+const storage = new Mongoose(pathToModels);
+
+const first = new Mongoose(pathToModels);
+first.name = 'first';
+
+const second = new Mongoose(pathToModels);
+second.name = 'second';
+
+app.add([storage, first, second]);
+// now you should create first.js and second.js files in config directories, and set configuration for different connections
+```
+
+
