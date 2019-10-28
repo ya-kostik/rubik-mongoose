@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const querystring = require('querystring');
 const isFunction = require('lodash/isFunction');
 const isString = require('lodash/isString');
+const isSet = require('lodash/isSet');
 const delay = require('./delay');
 
 const DEFAULT_RECONNECT_INTERVAL = 1000;
@@ -19,7 +20,6 @@ const DEFAULT_RECONNECT_INTERVAL = 1000;
 class Mongoose extends Rubik.Kubik {
   constructor(volumes) {
     super();
-    this.volumes = [];
     // First init
     this.reset();
 
@@ -40,6 +40,8 @@ class Mongoose extends Rubik.Kubik {
     this.models = this.mongoose.models;
     this.connection = null;
     this.db = null;
+    this.plugins = [];
+    this.volumes = [];
   }
 
   /**
@@ -124,6 +126,36 @@ class Mongoose extends Rubik.Kubik {
   }
 
   /**
+   * apply plugins to model
+   * @param  {mongoose.Model} model
+   */
+  applyPlugins(model) {
+    if (!this.plugins.length) return;
+    if (!model.schema) return;
+
+    for (const plugin of this.plugins) {
+      // A plugin can be a simple function
+      if (isFunction(plugin)) {
+        model.schema.plugin(plugin);
+        continue;
+      }
+
+      // Or object with fields:
+      // Required plugin — should be a function
+      if (!isFunction(plugin.plugin)) continue;
+      // Maybe models — Set with names of models
+      if (isSet(plugin.models) && !plugin.models.has(model.name)) {
+        continue;
+      // Or model — name of a model
+      } else if (plugin.model && plugin.model !== model.name) {
+        continue;
+      }
+
+      model.schema.plugin(plugin.plugin);
+    }
+  }
+
+  /**
    * Read models from volumes
    * @return {Promise}
    */
@@ -158,6 +190,9 @@ class Mongoose extends Rubik.Kubik {
   applyModel(model) {
     if (!(model && model.name && model.schema)) return;
     const collection = model.collection || undefined;
+
+    this.applyPlugins(model);
+
     this.mongoose.model(model.name, model.schema, collection);
   }
 
@@ -224,6 +259,14 @@ class Mongoose extends Rubik.Kubik {
     this.reset();
   }
 
+  /**
+   * Add plugin for a Model or models
+   * @param  {Function|Object} plugin plugin to add
+   */
+  plugin(plugin) {
+    this.plugins.push(plugin);
+    return this;
+  }
 
   async after() {
     await this.processHooksAsync('after');
