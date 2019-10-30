@@ -4,7 +4,7 @@ const querystring = require('querystring');
 const isFunction = require('lodash/isFunction');
 const isString = require('lodash/isString');
 const isSet = require('lodash/isSet');
-const delay = require('./delay');
+const delay = require('./lib/delay');
 
 const DEFAULT_RECONNECT_INTERVAL = 1000;
 
@@ -122,6 +122,10 @@ class Mongoose extends Rubik.Kubik {
       }
       return;
     }
+    if (Array.isArray(extension.plugins)) {
+      this.plugins = this.plugins.concat(extension.plugins);
+      return;
+    }
     return this.applyModel(extension);
   }
 
@@ -133,26 +137,22 @@ class Mongoose extends Rubik.Kubik {
     if (!this.plugins.length) return;
     if (!model.schema) return;
 
-    for (const plugin of this.plugins) {
+    this.plugins.forEach((plugin) => {
       // A plugin can be a simple function
       if (isFunction(plugin)) {
-        model.schema.plugin(plugin);
-        continue;
+        return model.schema.plugin(plugin);
       }
 
       // Or object with fields:
       // Required plugin — should be a function
-      if (!isFunction(plugin.plugin)) continue;
-      // Maybe models — Set with names of models
-      if (isSet(plugin.models) && !plugin.models.has(model.name)) {
-        continue;
-      // Or model — name of a model
-      } else if (plugin.model && plugin.model !== model.name) {
-        continue;
-      }
+      if (!isFunction(plugin.plugin)) return;
+
+      if (plugin.model && plugin.model !== model.name) return;
+
+      if (isSet(plugin.models) && !plugin.models.has(model.name)) return;
 
       model.schema.plugin(plugin.plugin);
-    }
+    });
   }
 
   /**
