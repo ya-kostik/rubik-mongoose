@@ -1,6 +1,6 @@
 {
   "name": "rubik-mongoose",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Mongoose's kubik for rubik",
   "main": "Mongoose.js",
   "repository": "https://github.com/ya-kostik/rubik-mongoose",
@@ -21,6 +21,8 @@
   "files": [
     "Mongoose.js",
     "/default",
+    "/lib",
+    "/plugins",
     "delay.js"
   ],
   "peerDependencies": {

@@ -156,14 +156,20 @@ app.add([storage, first, second]);
 You can add one or more mongooses plugins for all models, or selected ones.
 ### For all
 ```js
-// fn is a plugin function
-storage.plugin(fn);
+// plugin is a mongoose plugin function
+storage.plugin(plugin);
 ```
-### For selected
+### For selected models
 ```js
-// fn is a plugin function
+// plugin is a mongoose plugin function
 // models is a set of names
-storage.plugin({ plugin: fn, models })
+storage.plugin({ plugin, models })
+```
+### For one model
+```js
+// plugin is a mongoose plugin function
+// model is a name of model
+storage.plugin({ plugin, model })
 ```
 
 You should add all your plugins before models.
