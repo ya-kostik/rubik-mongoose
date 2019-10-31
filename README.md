@@ -152,4 +152,18 @@ app.add([storage, first, second]);
 // now you should create first.js and second.js files in config directories, and set configuration for different connections
 ```
 
+# Add plugins for Models
+You can add one or more mongooses plugins for all models, or selected ones.
+### For all
+```js
+// fn is a plugin function
+storage.plugin(fn);
+```
+### For selected
+```js
+// fn is a plugin function
+// models is a set of names
+storage.plugin({ plugin: fn, models })
+```
 
+You should add all your plugins before models.
