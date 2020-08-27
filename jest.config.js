@@ -10,5 +10,9 @@ module.exports = {
     '!**/node_modules/**',
     '!**/vendor/**',
     '!**/coverage/**'
+  ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/tests/mocks/auto-read-schemas'
   ]
 }
