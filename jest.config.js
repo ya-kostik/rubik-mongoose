@@ -13,6 +13,6 @@ module.exports = {
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
-    '/tests/mocks/auto-read-schemas'
+    '<rootDir>/tests/mocks/auto-read-schemas'
   ]
 }
