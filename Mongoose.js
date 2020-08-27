@@ -170,6 +170,8 @@ class Mongoose extends Rubik.Kubik {
 
     for (const volume of this.volumes) {
       return Rubik.helpers.readdir(volume, (file, name) => {
+        // ignore test files
+        if (/\.test\.js/.test(file)) return;
         const value = require(path.join(volume, file));
         if (Array.isArray(value)) return value.forEach(apply);
         if (value && value.constructor === this.mongoose.Schema) {
