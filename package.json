@@ -1,6 +1,6 @@
 {
   "name": "rubik-mongoose",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Mongoose's kubik for rubik",
   "main": "Mongoose.js",
   "repository": "https://github.com/ya-kostik/rubik-mongoose",
@@ -10,6 +10,7 @@
   "scripts": {
     "test": "jest --verbose",
     "watch": "jest --watch --verbose",
+    "lint": "eslint ./",
     "toPublish": "tarball=\"$(npm pack .)\"; wc -c \"${tarball}\"; tar tvf \"${tarball}\"; rm \"${tarball}\";"
   },
   "keywords": [
@@ -26,19 +27,18 @@
     "delay.js"
   ],
   "peerDependencies": {
-    "mongoose": "^5.8.6",
-    "rubik-main": "^2.1.3"
+    "mongoose": "^5.12.12",
+    "rubik-main": "^2.2.2"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.7.0",
-    "jest": "^26.4.2",
-    "mongodb": "^3.6.0",
-    "mongodb-memory-server": "^6.6.6",
-    "mongoose": "^5.10.1",
-    "rubik-main": "^2.2.1"
+    "eslint": "^7.27.0",
+    "jest": "^27.0.3",
+    "mongodb": "^3.6.9",
+    "mongodb-memory-server": "^6.9.6",
+    "mongoose": "^5.12.12",
+    "rubik-main": "^2.2.2"
   },
   "dependencies": {
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   }
 }
